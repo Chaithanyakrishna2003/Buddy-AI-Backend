@@ -1,0 +1,130 @@
+spring:
+  application:
+    name: buddy-AI
+  
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017}
+      database: ${MONGO_DB_NAME:dealshare}
+      auto-index-creation: true
+  
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+  
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+    default-property-inclusion: non_null
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+
+# Application Configuration
+app:
+  name: ${COMPANY_NAME:Buddy AI}
+  ai-assistant-name: ${AI_ASSISTANT_NAME:Buddy AI}
+  
+  openai:
+    api-key: ${OPENAI_API_KEY}
+    model: ${OPENAI_MODEL:gpt-3.5-turbo}
+    max-tokens: ${OPENAI_MAX_TOKENS:1000}
+    temperature: ${OPENAI_TEMPERATURE:0.7}
+    timeout: 30s
+  
+  features:
+    ai-enabled: ${AI_ENABLED:true}
+    redis-context-enabled: ${USE_REDIS_FOR_CONTEXT:true}
+    mock-mode-enabled: ${MOCK_MODE_ENABLED:false}
+  
+  default:
+    user-id: 1
+    city: ${DEFAULT_CITY:Jaipur}
+    state: ${DEFAULT_STATE:Rajasthan}
+    pincode: ${DEFAULT_PINCODE:302001}
+  
+  conversation:
+    max-history-length: 10
+    ttl-seconds: 3600
+  
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,https://*.vercel.app,https://support-agent-*.vercel.app}
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.dealshare.buddyai: DEBUG
+    org.springframework.data.mongodb: INFO
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    com.dealshare.buddyai: DEBUG
+    org.springframework.data.mongodb: DEBUG
+
+app:
+  features:
+    mock-mode-enabled: false
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  level:
+    root: WARN
+    com.dealshare.buddyai: INFO
+
+app:
+  features:
+    mock-mode-enabled: false
+
+server:
+  forward-headers-strategy: framework
+
