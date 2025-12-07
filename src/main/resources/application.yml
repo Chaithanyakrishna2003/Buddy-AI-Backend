@@ -45,9 +45,9 @@ app:
   
   openai:
     api-key: ${OPENAI_API_KEY}
-    model: ${OPENAI_MODEL:gpt-3.5-turbo}
-    max-tokens: ${OPENAI_MAX_TOKENS:1000}
-    temperature: ${OPENAI_TEMPERATURE:0.7}
+    model: ${OPENAI_MODEL:gpt-4o-mini}
+    max-tokens: ${OPENAI_MAX_TOKENS:250}
+    temperature: ${OPENAI_TEMPERATURE:0.8}
     timeout: 30s
   
   features:

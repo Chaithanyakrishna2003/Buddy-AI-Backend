@@ -1,6 +1,7 @@
 package com.dealshare.buddyai.controller;
 
 import com.dealshare.buddyai.dto.ProductDetailsDTO;
+import com.dealshare.buddyai.dto.ProductImageUpdateDTO;
 import com.dealshare.buddyai.dto.ResponseDTO;
 import com.dealshare.buddyai.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -83,5 +85,25 @@ public class ProductController {
         
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Update product images in bulk
+     * POST /api/products/update-images
+     * Body: { "imageMappings": { "1": "https://...", "2": "https://...", ... } }
+     */
+    @PostMapping("/update-images")
+    public ResponseEntity<ResponseDTO<String>> updateProductImages(@RequestBody ProductImageUpdateDTO request) {
+        log.info("Updating product images for {} products", request.getImageMappings().size());
+        
+        ResponseDTO<String> response = productService.updateProductImages(request.getImageMappings());
+        
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 }
+
+
 

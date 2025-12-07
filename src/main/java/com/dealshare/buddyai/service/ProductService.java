@@ -12,7 +12,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -170,6 +172,36 @@ public class ProductService {
     }
 
     /**
+     * Update product images in bulk
+     */
+    public ResponseDTO<String> updateProductImages(Map<Integer, String> imageMappings) {
+        try {
+            int updatedCount = 0;
+            for (Map.Entry<Integer, String> entry : imageMappings.entrySet()) {
+                Product product = productRepository.findByProductId(entry.getKey());
+                if (product != null) {
+                    product.setImageUrl(entry.getValue());
+                    product.setUpdatedAt(LocalDateTime.now());
+                    productRepository.save(product);
+                    updatedCount++;
+                }
+            }
+            return ResponseDTO.<String>builder()
+                    .success(true)
+                    .message("Updated images for " + updatedCount + " products")
+                    .data("Success")
+                    .build();
+        } catch (Exception e) {
+            log.error("Error updating product images", e);
+            return ResponseDTO.<String>builder()
+                    .success(false)
+                    .message("Error updating product images: " + e.getMessage())
+                    .data(null)
+                    .build();
+        }
+    }
+
+    /**
      * Convert Product entity to DTO
      */
     private ProductDetailsDTO convertToDTO(Product product) {
@@ -190,4 +222,6 @@ public class ProductService {
                 .build();
     }
 }
+
+
 

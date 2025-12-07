@@ -67,4 +67,22 @@ public class OrderController {
                     .body(new ResponseDTO<>(false, "Error fetching order: " + e.getMessage(), null));
         }
     }
+
+    @GetMapping("/{orderId}/items")
+    public ResponseEntity<ResponseDTO<Object>> getOrderItems(@PathVariable int orderId) {
+        try {
+            System.out.println("Fetching order items for order ID: " + orderId);
+            Optional<Order> order = orderService.getOrderById(orderId);
+            if (order.isPresent()) {
+                return ResponseEntity.ok(new ResponseDTO<>(true, "Order items found", order.get().getOrderItems()));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseDTO<>(false, "Order not found", null));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO<>(false, "Error fetching order items: " + e.getMessage(), null));
+        }
+    }
 }

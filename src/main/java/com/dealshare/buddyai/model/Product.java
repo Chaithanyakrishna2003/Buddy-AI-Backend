@@ -62,3 +62,5 @@ public class Product {
     @Field("updated_at")
     private LocalDateTime updatedAt;
 }
+
+

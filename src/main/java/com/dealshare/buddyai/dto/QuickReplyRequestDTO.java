@@ -6,15 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class PlaceOrderResponseDTO {
-    private int orderId;
-    private double totalAmount;
-    private String status;
-    private String message;
+public class QuickReplyRequestDTO {
+    private String conversation_id;
+    private String question_type;
 }
-
-
 

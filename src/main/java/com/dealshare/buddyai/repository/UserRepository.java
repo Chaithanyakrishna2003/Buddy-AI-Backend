@@ -1,0 +1,13 @@
+package com.dealshare.buddyai.repository;
+
+import com.dealshare.buddyai.model.User;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends MongoRepository<User, String> {
+    Optional<User> findByUserId(Integer userId);
+}
+

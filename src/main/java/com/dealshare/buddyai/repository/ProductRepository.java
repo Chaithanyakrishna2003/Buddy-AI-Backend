@@ -35,5 +35,18 @@ public interface ProductRepository extends MongoRepository<Product, String> {
      * Find products by price range
      */
     List<Product> findByPriceBetween(Double minPrice, Double maxPrice);
+    
+    /**
+     * Find product by product name (case insensitive)
+     */
+    @Query("{ 'product_name': { $regex: ?0, $options: 'i' } }")
+    List<Product> findByProductNameIgnoreCase(String productName);
+    
+    /**
+     * Find product by SKU code
+     */
+    Product findBySkuCode(String skuCode);
 }
+
+
 
