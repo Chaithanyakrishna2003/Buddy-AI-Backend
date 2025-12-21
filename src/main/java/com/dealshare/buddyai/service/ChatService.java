@@ -206,12 +206,32 @@ public class ChatService {
             
             log.info("OpenAI API response received: {}", aiResponse.substring(0, Math.min(100, aiResponse.length())));
 
+            // Search for products if user mentioned product names
+            List<Map<String, Object>> products = searchProductsFromMessage(request.getMessage(), userMessage.getContent());
+            
+            // If products are found, modify the AI response to be product-centric
+            if (products != null && !products.isEmpty()) {
+                StringBuilder productNames = new StringBuilder();
+                for (int i = 0; i < Math.min(products.size(), 5); i++) {
+                    Map<String, Object> product = products.get(i);
+                    String productName = (String) product.get("product_name");
+                    if (productName != null && !productName.isEmpty()) {
+                        if (productNames.length() > 0) {
+                            productNames.append(", ");
+                        }
+                        productNames.append(productName);
+                    }
+                }
+                
+                if (productNames.length() > 0) {
+                    String productIntro = String.format("I've found these products for you: %s. ", productNames.toString());
+                    aiResponse = productIntro + "You can view them below and add any that interest you to your cart!";
+                }
+            }
+
             // Add AI response to conversation
             ChatMessage assistantMessage = new ChatMessage(ChatMessageRole.ASSISTANT.value(), aiResponse);
             conversations.get(conversationId).add(assistantMessage);
-
-            // Search for products if user mentioned product names
-            List<Map<String, Object>> products = searchProductsFromMessage(request.getMessage(), userMessage.getContent());
             
             // Build response
             return ChatResponseDTO.builder()

@@ -16,3 +16,7 @@ public class ProductImageUpdateDTO {
     private Map<Integer, String> imageMappings;
 }
 
+
+
+
+
