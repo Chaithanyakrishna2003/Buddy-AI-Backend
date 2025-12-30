@@ -2,9 +2,8 @@
 
 ## ✅ Completed Setup Steps
 
-1. ✅ Created `docker-compose.yml` for MongoDB and Redis
-2. ✅ Created `setup.sh` automated setup script
-3. ✅ Created comprehensive documentation:
+1. ✅ Created `setup.sh` automated setup script
+2. ✅ Created comprehensive documentation:
    - `SETUP.md` - Detailed setup guide
    - `QUICKSTART.md` - Quick start guide
    - Updated `README.md` with setup instructions
@@ -37,12 +36,12 @@ brew install maven
 mvn -version
 ```
 
-**Docker Desktop:**
+**MongoDB:**
 ```bash
 # macOS
-brew install --cask docker
-
-# Or download from: https://www.docker.com/products/docker-desktop
+brew tap mongodb/brew
+brew install mongodb-community@7.0
+brew services start mongodb-community@7.0
 ```
 
 ### 2. Create .env File
@@ -87,14 +86,14 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000,https://*.vercel.app,https://support-
 
 **Important:** Replace `your-openai-api-key-here` with your actual OpenAI API key.
 
-### 3. Start Docker Services
+### 3. Verify MongoDB is Running
 
 ```bash
-# Start MongoDB and Redis
-docker-compose up -d
+# Check MongoDB status
+brew services list | grep mongodb
 
-# Verify they're running
-docker-compose ps
+# Start MongoDB if not running
+brew services start mongodb-community@7.0
 ```
 
 ### 4. Build the Project
@@ -146,13 +145,10 @@ This will automate most of the setup process.
 - Install Maven: `brew install maven`
 - Check: `mvn -version`
 
-### Docker Not Found
-- Install Docker Desktop
-- Ensure Docker is running: `docker ps`
-
 ### MongoDB Connection Error
-- Start MongoDB: `docker-compose up -d`
-- Check logs: `docker-compose logs mongodb`
+- Check if MongoDB is running: `brew services list | grep mongodb`
+- Start MongoDB: `brew services start mongodb-community@7.0`
+- Restart MongoDB: `brew services restart mongodb-community@7.0`
 
 ### OpenAI API Error
 - Verify API key in `.env` file
@@ -165,7 +161,7 @@ After completing the manual steps above:
 
 1. ✅ Verify all prerequisites are installed
 2. ✅ Create `.env` file with your OpenAI API key
-3. ✅ Start Docker services
+3. ✅ Verify MongoDB is running
 4. ✅ Build and run the application
 5. ✅ Test the API endpoints
 

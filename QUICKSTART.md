@@ -7,7 +7,7 @@ Get up and running with Buddy AI Backend in 5 minutes!
 Before starting, ensure you have:
 - ✅ Java 21 installed (`java -version`)
 - ✅ Maven installed (`mvn -version`)
-- ✅ Docker installed (`docker --version`) - for MongoDB/Redis
+- ✅ MongoDB running (locally or cloud)
 - ✅ OpenAI API key
 
 ## Step 1: Run Setup Script
@@ -19,7 +19,6 @@ Before starting, ensure you have:
 This will:
 - Check prerequisites
 - Create `.env` file
-- Start MongoDB and Redis
 - Build the project
 
 ## Step 2: Configure OpenAI API Key
@@ -77,8 +76,11 @@ brew install maven
 
 **MongoDB connection error?**
 ```bash
-# Start MongoDB
-docker-compose up -d
+# macOS - Start MongoDB
+brew services start mongodb-community@7.0
+
+# Linux - Start MongoDB
+sudo systemctl start mongod
 ```
 
 **Need more help?**

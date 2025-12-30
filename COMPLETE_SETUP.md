@@ -43,17 +43,17 @@ Verify Maven is installed:
 mvn -version
 ```
 
-### 1.5 Install Docker Desktop
+### 1.5 Install MongoDB
 ```bash
-brew install --cask docker
+brew tap mongodb/brew
+brew install mongodb-community@7.0
+brew services start mongodb-community@7.0
 ```
 
-Or download from: https://www.docker.com/products/docker-desktop
-
-**Important:** After installing Docker Desktop, make sure to:
-1. Open Docker Desktop application
-2. Wait for it to start (whale icon in menu bar)
-3. Verify it's running: `docker ps`
+Verify MongoDB is running:
+```bash
+brew services list | grep mongodb
+```
 
 ## Step 2: Run the Setup Script
 
@@ -67,7 +67,6 @@ cd /Users/CHAITHANYA/IdeaProjects/Buddy-AI-Backend
 This script will:
 - ✅ Check that Java 21 and Maven are installed
 - ✅ Create a `.env` file with all required environment variables
-- ✅ Start MongoDB and Redis using Docker Compose
 - ✅ Build the project
 
 ## Step 3: Configure OpenAI API Key
@@ -85,19 +84,19 @@ After the setup script runs, you need to add your OpenAI API key:
 4. Create a new API key
 5. Copy the key (starts with `sk-`)
 
-## Step 4: Verify Docker Services
+## Step 4: Verify MongoDB Service
 
-Make sure MongoDB and Redis are running:
+Make sure MongoDB is running:
 
 ```bash
-docker-compose ps
+brew services list | grep mongodb
 ```
 
-You should see both `buddy-ai-mongodb` and `buddy-ai-redis` with status "Up".
+You should see `mongodb-community` with status "started".
 
-If they're not running:
+If it's not running:
 ```bash
-docker-compose up -d
+brew services start mongodb-community@7.0
 ```
 
 ## Step 5: Build the Project
@@ -161,25 +160,16 @@ echo $PATH
 # Should include /opt/homebrew/bin or /usr/local/bin
 ```
 
-### Docker not running
-```bash
-# Start Docker Desktop manually from Applications
-# Or check if it's running:
-docker ps
-
-# If error, make sure Docker Desktop is started
-```
-
 ### MongoDB connection error
 ```bash
-# Check if MongoDB container is running
-docker ps | grep mongo
+# Check if MongoDB is running
+brew services list | grep mongodb  # macOS
 
 # If not running, start it:
-docker-compose up -d mongodb
+brew services start mongodb-community@7.0  # macOS
 
 # Check logs:
-docker-compose logs mongodb
+brew services restart mongodb-community@7.0  # macOS
 ```
 
 ### Port 8080 already in use
@@ -194,14 +184,14 @@ lsof -i :8080
 ## Quick Command Reference
 
 ```bash
-# Start services
-docker-compose up -d
+# Start MongoDB
+brew services start mongodb-community@7.0
 
-# Stop services
-docker-compose down
+# Stop MongoDB
+brew services stop mongodb-community@7.0
 
-# View logs
-docker-compose logs -f
+# Check MongoDB status
+brew services list | grep mongodb
 
 # Build project
 mvn clean install
