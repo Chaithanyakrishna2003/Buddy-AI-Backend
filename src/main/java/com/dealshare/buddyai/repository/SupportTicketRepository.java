@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface SupportTicketRepository extends MongoRepository<SupportTicket, String> {
     List<SupportTicket> findByOrderIdOrderByCreatedAtDesc(String orderId);
+    List<SupportTicket> findByOrderIdOrderByCreatedAtAsc(String orderId);
     List<SupportTicket> findByUserIdOrderByCreatedAtDesc(int userId);
     List<SupportTicket> findByStatus(String status);
     long countByOrderId(String orderId);

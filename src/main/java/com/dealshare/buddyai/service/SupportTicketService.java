@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,6 +62,10 @@ public class SupportTicketService {
 
     public List<SupportTicketResponseDTO> getTicketsByOrderId(String orderId) {
         log.info("Fetching tickets for order: {}", orderId);
+        
+        // First, update any old ticket IDs to the correct format
+        updateTicketIdsForOrder(orderId);
+        
         List<SupportTicket> tickets = supportTicketRepository.findByOrderIdOrderByCreatedAtDesc(orderId);
         return tickets.stream()
             .map(this::convertToDTO)
@@ -79,6 +82,29 @@ public class SupportTicketService {
 
     public long getTicketCountByOrderId(String orderId) {
         return supportTicketRepository.countByOrderId(orderId);
+    }
+
+    /**
+     * Update existing ticket IDs to follow the format TKT-{ORDERID}-{COUNT}
+     * This method should be called once to migrate old tickets with random IDs
+     */
+    public void updateTicketIdsForOrder(String orderId) {
+        log.info("Updating ticket IDs for order: {}", orderId);
+        List<SupportTicket> tickets = supportTicketRepository.findByOrderIdOrderByCreatedAtAsc(orderId);
+        
+        for (int i = 0; i < tickets.size(); i++) {
+            SupportTicket ticket = tickets.get(i);
+            String oldTicketId = ticket.getTicketId();
+            String newTicketId = String.format("TKT-%s-%d", orderId, i + 1);
+            
+            // Only update if the ticket ID doesn't already follow the correct format
+            if (!oldTicketId.startsWith("TKT-" + orderId + "-")) {
+                ticket.setTicketId(newTicketId);
+                ticket.setUpdatedAt(LocalDateTime.now());
+                supportTicketRepository.save(ticket);
+                log.info("Updated ticket ID from {} to {}", oldTicketId, newTicketId);
+            }
+        }
     }
 
     private SupportTicketResponseDTO convertToDTO(SupportTicket ticket) {

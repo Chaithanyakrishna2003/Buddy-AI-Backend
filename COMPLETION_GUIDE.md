@@ -9,7 +9,7 @@
 - ✅ All DTOs matching FastAPI
 - ✅ Core business services
 - ✅ Exception handling
-- ✅ Docker setup
+- ✅ Database setup
 - ✅ Documentation
 
 **What Remains:**
@@ -333,11 +333,11 @@ cd buddy-AI
 
 ### 2. Start Dependencies
 ```bash
-# Start MongoDB
-docker run -d -p 27017:27017 --name mongo mongo:7.0
+# macOS - Start MongoDB
+brew services start mongodb-community@7.0
 
-# Start Redis
-docker run -d -p 6379:6379 --name redis redis:7-alpine
+# Linux - Start MongoDB
+sudo systemctl start mongod
 ```
 
 ### 3. Set Environment Variables
@@ -415,8 +415,8 @@ Check all boxes before considering migration complete:
 - [ ] Redis caching works (with fallback)
 - [ ] OpenAI integration generates responses
 - [ ] All tests pass (>80% coverage)
-- [ ] Docker build succeeds
-- [ ] docker-compose stack runs
+- [ ] MongoDB connection succeeds
+- [ ] Build succeeds
 - [ ] Frontend connects successfully (change URL only)
 - [ ] API responses match FastAPI exactly
 - [ ] Error handling works correctly
@@ -440,7 +440,8 @@ Check all boxes before considering migration complete:
 ### "Cannot connect to MongoDB"
 ```bash
 # Check if MongoDB is running
-docker ps | grep mongo
+brew services list | grep mongodb  # macOS
+sudo systemctl status mongod       # Linux
 
 # Check connection string
 echo $MONGO_URI

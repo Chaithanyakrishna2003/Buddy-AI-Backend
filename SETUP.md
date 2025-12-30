@@ -26,9 +26,9 @@ This guide provides step-by-step instructions for setting up the Buddy AI Backen
    - Verify installation: `mvn -version`
    - Should show version 3.6 or higher
 
-3. **Docker & Docker Compose** (Recommended)
-   - Download [Docker Desktop](https://www.docker.com/products/docker-desktop)
-   - Verify installation: `docker --version` and `docker-compose --version`
+3. **MongoDB**
+   - Install locally or use a cloud service like MongoDB Atlas
+   - Required for data persistence
 
 4. **OpenAI API Key**
    - Sign up at [OpenAI](https://platform.openai.com/)
@@ -37,8 +37,7 @@ This guide provides step-by-step instructions for setting up the Buddy AI Backen
 ### Optional Software
 
 - **Redis** (for conversation context caching)
-  - Can be run via Docker Compose (included)
-  - Or install locally: `brew install redis` (macOS) or `apt install redis` (Linux)
+  - Install locally: `brew install redis` (macOS) or `apt install redis` (Linux)
 
 ## Environment Setup
 
@@ -58,8 +57,10 @@ export PATH="$JAVA_HOME/bin:$PATH"
 # Install Maven
 brew install maven
 
-# Install Docker Desktop
-brew install --cask docker
+# Install MongoDB (optional - can use cloud)
+brew tap mongodb/brew
+brew install mongodb-community@7.0
+brew services start mongodb-community@7.0
 ```
 
 ### Linux (Ubuntu/Debian) Setup
@@ -77,11 +78,6 @@ export PATH="$JAVA_HOME/bin:$PATH"
 
 # Install Maven
 sudo apt install maven
-
-# Install Docker
-sudo apt install docker.io docker-compose
-sudo systemctl start docker
-sudo systemctl enable docker
 ```
 
 ### Windows Setup
@@ -96,34 +92,9 @@ sudo systemctl enable docker
    - Extract to `C:\Program Files\Apache\maven`
    - Add `C:\Program Files\Apache\maven\bin` to PATH
 
-3. **Install Docker Desktop**
-   - Download from [Docker Desktop](https://www.docker.com/products/docker-desktop)
-   - Run installer and follow prompts
-
 ## Database Setup
 
-### Option 1: Using Docker Compose (Recommended)
-
-The project includes a `docker-compose.yml` file that sets up both MongoDB and Redis:
-
-```bash
-# Start MongoDB and Redis
-docker-compose up -d
-
-# Check if containers are running
-docker-compose ps
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-
-# Stop and remove volumes (clean slate)
-docker-compose down -v
-```
-
-### Option 2: Local MongoDB Installation
+### Local MongoDB Installation
 
 **macOS:**
 ```bash
@@ -265,10 +236,7 @@ curl -X POST http://localhost:8080/api/chat \
 ### 4. Check MongoDB Connection
 
 ```bash
-# If using Docker
-docker exec -it buddy-ai-mongodb mongosh
-
-# Or using local MongoDB
+# Using local MongoDB
 mongosh mongodb://localhost:27017/dealshare
 
 # List databases
@@ -320,17 +288,12 @@ mvn -version
 **Solution:**
 ```bash
 # Check if MongoDB is running
-docker ps | grep mongo
-
-# Or for local MongoDB
 brew services list | grep mongodb  # macOS
 sudo systemctl status mongod        # Linux
 
-# Check MongoDB logs
-docker-compose logs mongodb
-
 # Restart MongoDB
-docker-compose restart mongodb
+brew services restart mongodb-community@7.0  # macOS
+sudo systemctl restart mongod                # Linux
 ```
 
 ### OpenAI API Error
@@ -373,27 +336,6 @@ rm -rf target/
 mvn clean install -U  # -U forces update of dependencies
 ```
 
-### Docker Issues
-
-**Problem:** Docker containers won't start
-
-**Solution:**
-```bash
-# Check Docker is running
-docker ps
-
-# Check Docker Compose version
-docker-compose --version
-
-# Restart Docker Desktop (macOS/Windows)
-# Or restart Docker service (Linux)
-sudo systemctl restart docker
-
-# Remove and recreate containers
-docker-compose down -v
-docker-compose up -d
-```
-
 ## Next Steps
 
 After successful setup:
@@ -410,7 +352,6 @@ After successful setup:
 - [Spring Boot Documentation](https://spring.io/projects/spring-boot)
 - [MongoDB Documentation](https://docs.mongodb.com/)
 - [OpenAI API Documentation](https://platform.openai.com/docs)
-- [Docker Documentation](https://docs.docker.com/)
 
 ## Getting Help
 
